@@ -377,7 +377,7 @@ x-request-id: somevalue</programlisting>
         <example>
             <title>System Model Configuration File</title>
             <programlisting language="xml">
-         <xi:include href="samples/repose-translation-system-model.cfg"> </xi:include>
+<xi:include href="samples/repose-translation-system-model.cfg.xml" parse="text"> </xi:include>
  </programlisting>
             </example>
         
