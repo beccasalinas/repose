@@ -11,10 +11,11 @@
     xmlns:xlink="http://www.w3.org/1999/xlink" version="5.0"
     xml:id="Available_Doc-d1e140">
     <title>Available Documentation</title>
-    <para>We publish &PRODNAME; documentation at 
-        <link xlink:href="http://www.openrepose.org/documentation.html">http://www.openrepose.org/documentation.html</link>.
-        The following &PRODNAME; documentation is available as of
-        v2.6.6:</para>
+    <para>We publish &PRODNAME; documentation at <link
+            xlink:href="http://www.openrepose.org/documentation.html"
+            >http://www.openrepose.org/documentation.html</link>. The
+        following &PRODNAME; documentation is available as of
+        v2.6.13:</para>
     <itemizedlist>
         <listitem>
             <para>

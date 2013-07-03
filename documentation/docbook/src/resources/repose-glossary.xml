@@ -187,6 +187,9 @@
                             supports permalinks and multiple choices.</para>
                     </glossdef>
                 </glossentry>
+                <glossentry xml:id=""
+                    <glossterm></glossterm>
+                </glossentry>
             </glossary>
             <glossary>
                 <title>&PRODNAME; Internals</title>

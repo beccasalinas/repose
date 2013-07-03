@@ -1,0 +1,520 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book [
+<!-- product name is likely to change; parameterize full name, abbreviated name, expanded name -->
+<!ENTITY PRODNAME "Repose">
+<!ENTITY PRODABBREV "Repose">
+<!ENTITY PRODEXPAND "REstful PrOxy Service Engine">
+    <!-- Some useful entities borrowed from HTML -->
+    <!ENTITY ndash  "&#x2013;">
+    <!ENTITY mdash  "&#x2014;">
+    <!ENTITY hellip "&#x2026;">
+
+    <!-- Useful for describing APIs -->
+    <!ENTITY GET    '<command xmlns="http://docbook.org/ns/docbook">GET</command>'>
+    <!ENTITY PUT    '<command xmlns="http://docbook.org/ns/docbook">PUT</command>'>
+    <!ENTITY POST   '<command xmlns="http://docbook.org/ns/docbook">POST</command>'>
+    <!ENTITY DELETE '<command xmlns="http://docbook.org/ns/docbook">DELETE</command>'>
+
+    <!ENTITY CHECK  '<inlinemediaobject xmlns="http://docbook.org/ns/docbook">
+        <imageobject>
+        <imagedata fileref="img/Check_mark_23x20_02.svg"
+        format="SVG" scale="60"/>
+        </imageobject>
+        </inlinemediaobject>'>
+
+    <!ENTITY ARROW  '<inlinemediaobject xmlns="http://docbook.org/ns/docbook">
+        <imageobject>
+        <imagedata fileref="img/Arrow_east.svg"
+        format="SVG" scale="60"/>
+        </imageobject>
+        </inlinemediaobject>'>
+]>
+<!-- in BOOK below, add status="draft" to set watermark on cover and left margin -->
+<book version="5.0" xmlns="http://docbook.org/ns/docbook"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:svg="http://www.w3.org/2000/svg"
+      xmlns:m="http://www.w3.org/1998/Math/MathML"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      xml:id="Repose-Logging-Deployment-Guide">
+    <?rax pdf.url="../../repose-logging-deploy.pdf"?>
+    <title>&PRODNAME; Operations Handbook</title>
+    <!-- set watermark on cover and left margin -->
+    <?rax status.bar.text.font.size="40px" status.bar.text="DRAFT"?>
+    <!-- size line1 & line2 of title on PDF cover -->
+    <?rax title.font.size="35px" subtitle.font.size="16px"?>
+    <titleabbrev>&PRODABBREV; Operations Handbook</titleabbrev>
+    <info>
+        <author>
+            <personname>
+                <firstname/>
+                <surname/>
+            </personname>
+            <affiliation>
+                <orgname>Rackspace Cloud</orgname>
+            </affiliation>
+        </author>
+        <copyright>
+            <year>2010</year>
+            <year>2011</year>
+            <year>2012</year>
+            <holder>2013</holder>
+            <holder>Rackspace US, Inc.</holder>
+        </copyright>
+        <releaseinfo>v1.0</releaseinfo>
+        <productname>&PRODNAME;</productname>
+        <pubdate>2013-04-29</pubdate>
+        <legalnotice role="apache2">
+            <annotation>
+                <remark>Copyright details are filled in by the template.</remark>
+            </annotation>
+        </legalnotice>
+        <abstract>
+            <para>This document is intended for systems administrators
+                interested in configuring and installing
+                &PRODEXPAND;. </para>
+        </abstract>
+        <revhistory>
+            <revision>
+                <date>2013-04-29</date>
+                <revdescription>
+                    <itemizedlist spacing="compact">
+                        <listitem><para>I uploaded the document to match Repose's updated xmlns and config. file name</para>
+                     </listitem>
+                    </itemizedlist>
+                </revdescription>
+            </revision>
+        </revhistory>
+        <revhistory>
+            <revision>
+                <date>2012-02-14</date>
+            </revision>
+            <revision>
+                <date>2012-01-30</date>
+                <revdescription>
+                    <itemizedlist spacing="compact">
+                        <listitem><para>Clarified current limitation to HTTP logging.</para></listitem>
+                    </itemizedlist>
+                </revdescription>
+            </revision>
+            <revision>
+                <date>2012-01-11</date>
+                <revdescription>
+                    <itemizedlist spacing="compact">
+                        <listitem><para>Initial release.</para></listitem>
+                    </itemizedlist>
+                </revdescription>
+            </revision>
+        </revhistory>
+    </info>
+    <chapter xml:id="Overview-d1e85">
+        <title>About This Document</title>
+            <para> The purpose of this handbook is to facilitate the
+            installation of &PRODNAME; and offer operation guidelines.
+            This handbook is not a tutorial. It provides basic
+            information that will help you understand &PRODNAME;,but
+            you must adapt this information to suit your own
+            configuration. </para></chapter>
+    <chapter xml:id="Installation-000">
+        <title>Installation Introduction</title>
+        <para> &PRODNAME; also offers a quick <emphasis role="italic"
+                >non-production</emphasis> method of installing
+            &PRODNAME; for informational use only. Follow the link to
+            the Repose Sandbox to begin using this method:
+                <link xlink:href="http://wiki.openrepose.org/display/REPOSE/Repose+Sandbox"> </link></para>
+        <para>Below are deployment strategies intended for <emphasis
+                role="italic">production</emphasis> use of
+            &PRODNAME;:</para>
+        <para/>
+   
+ 
+    
+        <para><emphasis role="bold">Proxy Server
+            (Valve)</emphasis></para>
+        <para>The Proxy Server (Valve) deployment strategy runs
+            &PRODNAME; as a standalone proxy server which will sit
+            between the requester and the origin service. This
+            deployment strategy runs &PRODNAME; on a different port or
+            a different host than the origin service. Proxy Server
+            (Valve) is a .jar file. </para>
+        <para/>
+        <para>
+            <emphasis role="bold"> ROOT.war</emphasis>
+        </para>
+        <para> &PRODNAME; will run inside a third party servlet
+            container (e.g. tomcat or glassfish). This strategy allows
+            &PRODNAME; to run on the same container as the origin
+            service.</para>
+        <para> The ROOT.war artifact is a Web application ARchive
+            (WAR). It contains all the components needed to install
+            &PRODNAME; into a running application container. One of
+            these components is a default web.xml that can start up
+            &PRODNAME; in the standard configuration model.</para>
+        <para>
+            <note>
+                <para>See
+                    <link xlink:href="http://wiki.openrepose.org/display/REPOSE/Windows"> </link>/link>
+                    if installing under Windows</para>
+            </note>
+        </para>
+        <section xml:id="Introduction-000">
+            <title> Prerequisites for Repose Installation</title>
+            <para>Before getting started, make sure you have the
+                following installed on your local machine:</para>
+            <para>
+                <emphasis role="bold">Java OpenJDK 1.6 (or Oracle's
+                    JRE)</emphasis></para>
+            <para>
+                <emphasis role="bold">Tomcat 7 or higher( or any
+                    Servlet Spec 3- Compliant Container)</emphasis>,
+                if running the ROOT.war deployment </para>
+        </section>
+        
+        
+        <section xml:id="Installation-Repose-000">
+            <title> Installing Repose</title>
+            <para> Repose can either be installed through a Linux
+                package manager (RPM or Debian) or downloaded from
+                GitHub. As previously mentioned, you can choose to
+                install Repose as either ROOT.war in an existing
+                servlet container or the Valve Proxy server. Choose
+                    <emphasis role="italic">one</emphasis> of the
+                following installations: </para>
+            <para><emphasis role="bold"> Installing ROOT.war From a
+                    Linux Package Manager (RPM)</emphasis>
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>The instructions for installing ROOT.war
+                        from RPM are located at<link xlink:href="http://wiki.openrepose.org/display/REPOSE/RPM#RPM-InstallingRPM%27sforROOT.war"> </link>
+                        RPM installing ROOT.war </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+                <emphasis role="bold">Installing Valve Proxy Server
+                    from a Linux Package Manager (RPM or
+                    Debian)</emphasis></para>
+            <itemizedlist>
+                <listitem>
+                    <para>The instructions for installing Valve Proxy
+                        Server from RPM are located at RPM Installing
+                        Valve Proxy Server.</para>
+                </listitem>
+                <listitem>
+                    <para>The instruction for installing Valve Proxy
+                        Server from Debian are located at Debian
+                        Installing Valve Proxy Server.</para>
+                </listitem>
+            </itemizedlist>
+            <para><emphasis role="bold">Installing Repose from
+                    GitHub</emphasis>
+            </para>
+            <itemizedlist>
+                <para>Repose can be downloaded from ******** and built
+                    with Maven. Once built, the following binaries are
+                    created for the different installations: </para>
+                <listitem>
+                    <para><emphasis role="bold">ROOT.war</emphasis> -
+                        The ROOT.war is built at
+                        project-set/core/web-application/target/ROOT.war.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para><emphasis role="bold">Valve Proxy
+                            Server</emphasis> - The Valve jar file is
+                        located at
+                        project-set/core/valve/target/repose-valve.jar.
+                    </para>
+                </listitem>
+            </itemizedlist> </section>
+            
+            <section xml:id="Installation-Overview-000"> 
+               <title> Paths for Default Installation Directories </title>
+<para>The directories below are provided during the installation
+                process. These directories <emphasis role="italic"
+                    >cannot</emphasis> be customized. You can find
+                these &PRODNAME; directories by following the
+                appropriate paths:</para>
+            <para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Repose Valve jar is installed in<code>
+                                /usr/share/lib/repose.</code></para>
+                    </listitem>
+                    <listitem>
+                        <para>Repose ROOT.war is installed
+                                in <code>/var/lib/tomcat7/webapps.</code></para>
+                    </listitem>
+                    <listitem>
+                        <para>Repose start up script is in
+                                <code> /etc/init.d.</code></para>
+                        <para/>
+                        <para>The &PRODNAME; default config. directory
+                            is set to <filename>/etc/repose</filename>
+                            and can be customized in the following
+                            methods:</para>
+                    </listitem>
+                    <listitem>
+                        <para>For the<emphasis role="bold"
+                            > </emphasis>Valve Installation, the
+                            config directory can be set with the
+                                <filename>-c</filename> command line
+                            option. See Starting and Stopping Repose
+                            for more information.</para>
+                    </listitem>
+                    <listitem>
+                        <para>For the ROOT.war Installation, the
+                            config directory can be set through the
+                            web.xml file in the ROOT.war. See Starting
+                            and Stooping Repose for more information. </para>
+                        <para/>
+                        <para>The following directories can be
+                            customized using the container.cfg.xml if
+                            you do not want to use the default.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Repose deployment folder where ear files
+                            get exploded is
+                            /var/repose/deployment.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Repose ear files are installed in
+                                <filename class="directory"
+                                >/usr/share/repose/filters.</filename>
+                        </para>
+                        <para/>
+                        <para>****Click to learn more about Repose
+                            Directories****</para>
+                        <para/>
+                        <?sbr?>
+                    </listitem>
+                </itemizedlist>
+            </para> </section> 
+        
+       <section xml:id="Installation-Introduction-000">
+           <title>Required Configurations for Deployment</title>
+      <para> Below are files of the default configuration settings
+                that are a part of this installation. These default
+                files are <emphasis role="italic">required
+                </emphasis>to run &PRODABBREV;. </para>
+            <para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Edit the
+                                   default<code>system-model.cfg.xml</code>
+                            that is provided by the installation to
+                            point to your origin service.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Edit the default
+                                <filename>container.cfg.xml</filename>that
+                            is provided by the installation to make
+                            sure Repose knows where to look for
+                            component artifacts and where to deploy
+                            them. </para>
+                        <para>Click ***here*** to learn more about
+                            Repose Configurations </para>
+                      
+                      
+                        
+                            <important>
+                            <para>To START or STOP Repose using Valve
+                                proxy Server follow: **** </para>
+                            <para>To START or STOP Repose using a
+                                ROOT.war Configuration follow:
+                                ****</para></important>
+                 
+                        
+                    </listitem>
+                </itemizedlist>
+            </para>
+       </section>
+        <section xml:id="Installation-Intro-1111">
+            <title>Testing Repose</title>
+            <para> Send a request to verify that Repose is running:
+                    <code>curl localhost:8887 -v</code> Verify
+                Response returns response code 200, and that the "Via"
+                header containing the string "Repose" shows which
+                version of Repose you are running. </para>
+            <para>For example, part of your response should be in the
+                following form: </para>
+            
+                    <programlisting>HTTP/1.1 200 OK 
+Content-Type: text/plain 
+<?sbr?>Via: 1.1 Repose (Repose/2.7.1-SNAPSHOT) 
+x-request-id: somevalue</programlisting>
+           
+  <para>Repose is running successfully when you send the above request
+                and you are able to run the end service. <tip>
+                    <para>Please look at the log files that are
+                        generated during the Starting of Repose to
+                        debug if you experience any issues. </para>
+                </tip></para>         
+        </section>
+    </chapter>
+    
+    <chapter xml:id="Configuration-d1e365">
+        <title>Filters</title>
+        <para> Repose can load Java Servlet Filters and process the
+            requests and responses traveling between the client and
+            server. A <emphasis role="bold">Filter</emphasis> is an
+            HTTP message interceptor that provides a specific piece of
+            business functionality. A filter contains Repose specific
+            named reference. A <emphasis role="bold">Filter
+                Chain</emphasis> is a sequence of filters that will
+            intercept the request from the first filter of the
+            sequence to the last enumerated filter in the
+            sequence.</para>
+      <para><emphasis role="bold">How To Add Filters
+            </emphasis></para>
+        <para>You can add filters to Repose using the System Model
+            Configuration File. See the
+                <code>system-model.cfg.xml</code> example below. The
+            filter name used in the system-model.cfg.xml are defined
+            in ** web-fragment.xml**</para>
+   
+            <para> </para>
+        <example>
+            <title>System Model Configuration File</title>
+            <programlisting language="xml">
+         <xi:include href="samples/repose-translation-system-model.cfg"> </xi:include>
+ </programlisting>
+            </example>
+        
+        <para> </para>
+    </chapter>
+    <chapter xml:id="Formatting_Log-d1e431">
+        <title>Further Information</title>
+        <para><emphasis role="bold"> More About
+            Directories</emphasis></para>
+        <para>Upon successful completion of the Repose installation
+            the following default directories are made accessible.
+            These default directories are described below:</para>
+        <table border="1" frame="box">
+            <caption>
+                Default Directory Model</caption>
+            <col width="25%"/>
+            <col width="74%"/>
+            <col width="2%"/>
+            <thead>
+                <tr>
+                    <td>Directory</td>
+                    <td>Description</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td> Artifact Directory</td>
+                    <td>
+                        <para> Stores all the artifacts that Repose
+                            has been configured to use. </para>
+                        <para>Default Location:<filename>
+                                /User/share/repose/filters</filename></para>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Configuration Directory</td>
+                    <td>Stores all of Repose's XML configurations in
+                        this directory. The ROOT.war deploy assumes
+                        this directory is located in <filename
+                            class="directory">/etc/repose</filename>.
+                        Repose only supports file system configuration
+                        locations. Default Location:
+                            <filename>/etc/repose</filename></td>
+                    <td/>
+                </tr>
+                <tr>
+                    <td> Deployment Directory</td>
+                    <td>
+                        <para> Default location: <filename
+                                class="directory"
+                                >/var/repose/deployment </filename>
+                            Repose uses the deployment directory to
+                            copy deployed versions of the artifacts it
+                            has been configured to use. Define a
+                            deployment directory as a writable
+                            location.</para>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Logs</td>
+                    <td>
+                        <para> This stores System logs and HTTP
+                            logs.</para>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Operating System User and Group
+                        Configuration</td>
+                    <td>
+                        <para> Dedicate a User and Group to Repose to
+                            improve isolation and selection of
+                            Repose's permissions. Be sure the Repose
+                            User and Group can write to the file
+                            system as well as read configurations
+                            stored in the file system.</para>
+                    </td>
+                </tr>
+               
+            </tbody>
+        </table>                 
+ <para>
+            <note>
+                <para>All consumable artifacts meant for deployment
+                    through Repose must conform to the Java
+                    Platform,Enterprise Edition (JEE6) </para>
+                <para>specification for Enterprise ARchive (EAR)
+                    files.</para>
+                <para/>
+            </note>
+        </para> 
+        <para>
+            <emphasis role="bold">    More About
+                Configurations
+            </emphasis> The following table lists the configuration files that are required for Repose installation and a description of the required file.</para>
+        <table border="1" frame="box">
+            
+            <caption>
+                Required Configuration Files</caption>
+            <col width="25%"/>
+            <col width="75%"/>
+            <thead>
+                <tr>
+                    <td>Filename</td>
+                    <td>Description</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td> System Model</td>
+                    <td>
+                        <para> The System Model configuration outlines
+                            the entire deployment layout for the
+                            service cluster. Repose must be aware of
+                            this in order to configure itself and
+                            correctly coordinate routing if necessary.
+                            The System Model also lets Repose know
+                            where the other Repose nodes reside. Using
+                            this information, Repose can coordinate
+                            its own clustering to help load balance or
+                            share data among nodes that share common
+                            filters.</para>
+                    </td>
+                </tr>
+                <tr>
+                    <td> Container</td>
+                    <td>
+                        <para> The container tells the system where to
+                            look for component artifacts and where to
+                            deploy them.</para>
+                    </td>
+                </tr>
+            </tbody>
+        </table>        
+    </chapter>
+    
+            
+   
+            
+    <xi:include href="chapters/afterword.xml"/>
+</book>

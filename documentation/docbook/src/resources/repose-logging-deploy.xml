@@ -38,13 +38,12 @@
       xmlns:html="http://www.w3.org/1999/xhtml"
       xml:id="Repose-Logging-Deployment-Guide">
     <?rax pdf.url="../../repose-logging-deploy.pdf"?>
-    <title>&PRODNAME; HTTP Logging Component Deployment
-        Handbook</title>
+    <title>&PRODNAME; Operations Handbook</title>
     <!-- set watermark on cover and left margin -->
     <?rax status.bar.text.font.size="40px" status.bar.text="DRAFT"?>
     <!-- size line1 & line2 of title on PDF cover -->
     <?rax title.font.size="35px" subtitle.font.size="16px"?>
-    <titleabbrev>&PRODABBREV; HTTP Logging Deployment</titleabbrev>
+    <titleabbrev>&PRODABBREV; Operations Handbook</titleabbrev>
     <info>
         <author>
             <personname>
@@ -59,20 +58,33 @@
             <year>2010</year>
             <year>2011</year>
             <year>2012</year>
+            <holder>2013</holder>
             <holder>Rackspace US, Inc.</holder>
         </copyright>
         <releaseinfo>v1.0</releaseinfo>
         <productname>&PRODNAME;</productname>
-        <pubdate>2012-02-14</pubdate>
+        <pubdate>2013-04-29</pubdate>
         <legalnotice role="apache2">
             <annotation>
                 <remark>Copyright details are filled in by the template.</remark>
             </annotation>
         </legalnotice>
         <abstract>
-            <para>This document is intended for systems administrators interested in configuring
-                their service to use the logging component of the &PRODEXPAND;. </para>
+            <para>This document is intended for systems administrators
+                interested in configuring, installing, and
+                troubleshooting the &PRODEXPAND;. </para>
         </abstract>
+        <revhistory>
+            <revision>
+                <date>2013-04-29</date>
+                <revdescription>
+                    <itemizedlist spacing="compact">
+                        <listitem><para>I uploaded the document to match Repose's updated xmlns and config. file name</para>
+                     </listitem>
+                    </itemizedlist>
+                </revdescription>
+            </revision>
+        </revhistory>
         <revhistory>
             <revision>
                 <date>2012-02-14</date>
@@ -104,50 +116,191 @@
     </info>
     <chapter xml:id="Overview-d1e85">
         <title>About This Document</title>
-            <para> The purpose of this handbook is to facilitate
-            deployment of &PRODNAME;'s HTTP logging component. This
-            handbook is not a tutorial. It provides basic information
-            that will help you understand and deploy this &PRODNAME;
-            component, but you must adapt this information to suit
-            your own configuration. </para>
+            <para> The purpose of this handbook is to facilitate the
+            installation of &PRODNAME; offer operation guidelines, and
+            present troubleshooting methods.  This handbook is not a
+            tutorial. It provides basic information that will help you
+            understand  &PRODNAME;,but you must adapt this information
+            to suit your own configuration. </para>
             <para>
                 This handbook is focused on one &PRODNAME; component.
                 Other &PRODNAME; components are documented in companion handbooks.
-            </para>
-        <section xml:id="Document_Change_History-d1e102">
-            <title>Document Change History</title>
-            <para>This version of the handbook replaces and obsoletes all previous versions.
-                The most recent changes are described in the table below: </para>
-            <?rax revhistory?>
+            </para></chapter>
+    <chapter xml:id="Installation-000">
+        <title>Installation</title>
+        <para> &PRODNAME; also offers a quick <emphasis role="bold"
+                >non-production</emphasis> method of installing
+            &PRODNAME; for informational use only. Follow the link to
+            the Repose Sandbox to begin using this method:*****
+        </para>
+        <para>Below are deployment strategies intended for <emphasis
+                role="bold">production</emphasis> use of
+            &PRODNAME;:</para>
+        <para/>
+   
+ 
+    
+        <para><emphasis role="bold">Proxy Server
+            (Valve)</emphasis></para>
+        <para>The Proxy Server (Valve) deployment strategy runs
+            &PRODNAME; as a standalone proxy server which will sit
+            between the requester and the origin service. This
+            deployment strategy runs &PRODNAME; on a different port or
+            a different host than the origin service. Proxy Server
+            (Valve) is a .jar file. </para>
+        <para/>
+        <para>
+            <emphasis role="bold"> ROOT.war</emphasis>
+        </para>
+        <para> &PRODNAME; will run inside a third party servlet
+            container (e.g. tomcat or glassfish). This strategy allows
+            &PRODNAME; to run on the same container as the origin
+            service.</para>
+        <para> The ROOT.war artifact is a Web application ARchive
+            (WAR). It contains all the components needed to install
+            &PRODNAME; into a running application container. One of
+            these components is a default web.xml that can start up
+            &PRODNAME; in the standard configuration model.</para>
+        <section xml:id="Introduction-000">
+            <title> Prerequisites for Repose Installation</title>
+            <para>Before getting started, make sure you have the
+                following installed on your local machine:</para>
+            <para>
+                <emphasis role="bold">Java OpenJDK 1.6 (or Oracle's
+                    JRE)</emphasis></para>
+            <para>
+                <emphasis role="bold">Tomcat 7 or higher( or any
+                    Servlet Spec 3- Compliant Container)</emphasis>,
+                if running the ROOT.war deployment </para>
         </section>
-        <xi:include href="chapters/available-doc.xml"/>
+        
+        <section xml:id="Installation-000">
+            <title> Installing Repose</title>
+            <para> Repose can either be installed through a linux
+                package manager (RPM or Debian) or downloaded from
+                GitHub. As previously mentioned, you can choose to
+                install Repose as either ROOT.war in an existing
+                servlet container or the Valve Proxy server. Choose
+                    <emphasis role="italic">one</emphasis> of the
+                following installations: </para>
+            <para><emphasis role="bold"> Installing ROOT.war From a
+                    Linux Package Manager (RPM)</emphasis>
+            </para>
+            <itemizedlist>
+                <listitem>
+                    <para>The instructions for installing ROOT.war
+                        from RPM are located at RPM installing
+                        ROOT.war </para>
+                </listitem>
+            </itemizedlist>
+            <para>
+                <emphasis role="bold">Installing Valve Proxy Server
+                    from a Linux Package Manager (RPM or
+                    Debian)</emphasis></para>
+            <itemizedlist>
+                <listitem>
+                    <para>The instructions for installing Valve Proxy
+                        Server from RPM are located at RPM Installing
+                        Valve Proxy Server.</para>
+                </listitem>
+                <listitem>
+                    <para>The instruction for installing Valve Proxy
+                        Server from Debian are located at Debian
+                        Installing Valve Proxy Server.</para>
+                </listitem>
+            </itemizedlist>
+            <para><emphasis role="bold">Installing Repose from
+                    GitHub</emphasis>
+            </para>
+            <itemizedlist>
+                <para>Repose can be downloaded from ******** and built
+                    with Maven. Once built, the following binaries are
+                    created for the different installations: </para>
+                <listitem>
+                    <para><emphasis role="bold">Root.WAR</emphasis> -
+                        The ROOT.war is built at
+                        project-set/core/web-application/target/ROOT.war.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para><emphasis role="bold">Valve Proxy
+                            Server</emphasis> - The Valve jar file is
+                        located at
+                        project-set/core/valve/target/repose-valve.jar.
+                    </para>
+                </listitem>
+            </itemizedlist> </section>
+            
+            <section xml:id="Introduction-000"> 
+               <title> Paths for Default Installation Directories </title>
+<para>The directories below are given to you during the installation process. These directories cannot be customized. You can find these &PRODNAME;
+    directories by following the appropriate paths:</para>
+            <para>
+                <itemizedlist>
+                    <listitem>
+                        <para>Repose valve jar is installed in<code>
+                                /usr/share/lib/repose.</code></para>
+                    </listitem>
+                    <listitem>
+                        <para>Repose Root.war is installed
+                                in <code>/var/lib/tomcat7/webapps.</code></para>
+                    </listitem>
+                    <listitem>
+                        <para>Repose start up script in
+                                <code> /etc/init.d.</code></para>
+                        <para/>
+                        <para>The &PRODNAME; <emphasis role="bold"
+                                >default config. directory</emphasis>
+                            is set to <filename>/etc/repose</filename>
+                            and can be customized in the following
+                            methods:</para>
+                    </listitem>
+                    <listitem>
+                        <para>For the<emphasis role="bold"> Valve
+                                Installation</emphasis>, the config
+                            directory can be set with the
+                                <filename>-c</filename> command line
+                            option. See Starting and Stopping Repose
+                            for more information.</para>
+                    </listitem>
+                    <listitem>
+                        <para>For the <emphasis role="bold">ROOT.war
+                                Installation</emphasis>, the config
+                            directory can be set through the web.xml
+                            file in the ROOT.war. See Starting and
+                            Stooping Repose for more information. </para>
+                        <para/>
+                        <para>The following directories can be
+                            customized using the container.cfg.xml if
+                            you do not want to use the default.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Repose deployment folder where ear files
+                            get exploded is
+                            /var/repose/deployment.</para>
+                    </listitem>
+                    <listitem>
+                        <para>Repose ear files are installed in
+                                <filename class="directory"
+                                >/usr/share/repose/filters.</filename>
+                        </para>
+                        <para/>
+                        <para>Click to learn more about Repose
+                            Directories</para>
+                    </listitem>
+                </itemizedlist>
+            </para> </section> 
+        
+        
+        
     </chapter>
-    <!-- naming this section xml:id="Introduction-000" to make it the first page opened in HTML, matching <webhelpDefaultTopic>Introduction-000.html</webhelpDefaultTopic> in pom.xml -->
-    <chapter xml:id="Introduction-000">
-        <title>Introduction to the HTTP Logging Component of
-            &PRODNAME;</title>
-        <para>
-            &PRODNAME;'s HTTP logging component allows logging of information in HTTP requests that are sent to &PRODNAME; and responses sent from &PRODNAME;.
-        </para>
-        <para>
-            HTTP logging in &PRODNAME; is based on the Apache HTTPD Logging Standard, described at 
-            <link xlink:href="http://httpd.apache.org/docs/2.2/mod/mod_log_config.html">http://httpd.apache.org/docs/2.2/mod/mod_log_config.html</link>.
-        </para>
-        <figure xml:id="Overview">
-            <title>Overview of &PRODNAME; HTTP Logging</title>
-            <mediaobject>
-                <imageobject>
-                    <imagedata fileref="figures/repose-logging-HTTPoverview.png" format="PNG" align="center"/>
-                </imageobject>
-            </mediaobject>
-        </figure>
-    </chapter>
+    
     <chapter xml:id="Configuration-d1e365">
         <title>Configuration</title>
         <para> To add the HTTP logging component to a &PRODNAME;
             deployment, add the <code>http-logging</code> filter to
             the &PRODNAME; configuration file,
-                <code>power-proxy.cfg.xml</code>. You can read about
+                <code>system-model.cfg.xml</code>. You can read about
             configuring &PRODNAME; in the &PRODNAME; Deployment
             Handbook. </para>
         <important>
