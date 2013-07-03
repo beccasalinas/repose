@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <client-auth xmlns="http://docs.rackspacecloud.com/repose/client-auth/v1.0">
-    <openstack-auth delegable="false" tenanted="false" token-cache-timeout="600000" group-cache-timeout="600000" xmlns="http://docs.openrepose.org/repose/client-auth/os-ids-auth/v1.0">
+    <openstack-auth delegable="false" tenanted="false" request-groups="true" token-cache-timeout="600000" group-cache-timeout="600000" xmlns="http://docs.openrepose.org/repose/client-auth/os-ids-auth/v1.0">
         <identity-service username="admin_username" password="admin_password" uri="https://identity.example.com/v2.0/" />
         
         <!-- Example Regex to capture user identity in uri
@@ -12,6 +12,8 @@
             -->
         <client-mapping id-regex=".*/servers/([-|\w]+)/?.*"/>
     </openstack-auth>
+
+    <endpoints-in-header format="some-format" cache-timeout="600000" identity-contract-version="2"/>
 
     <white-list>
         <uri-pattern uri-regex="/application\.wadl$" />

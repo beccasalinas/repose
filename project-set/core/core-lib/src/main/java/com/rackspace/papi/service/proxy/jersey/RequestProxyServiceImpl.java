@@ -5,9 +5,9 @@ import com.rackspace.papi.commons.util.servlet.http.MutableHttpServletResponse;
 import com.rackspace.papi.domain.ReposeInstanceInfo;
 import com.rackspace.papi.http.proxy.HttpException;
 import com.rackspace.papi.http.proxy.common.HttpResponseCodeProcessor;
-import com.rackspace.papi.service.proxy.ProxyRequestException;
-import com.rackspace.papi.service.proxy.RequestProxyService;
-import com.rackspace.papi.service.proxy.TargetHostInfo;
+import com.rackspace.papi.commons.util.proxy.ProxyRequestException;
+import com.rackspace.papi.commons.util.proxy.RequestProxyService;
+import com.rackspace.papi.commons.util.proxy.TargetHostInfo;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientHandlerException;
 import com.sun.jersey.api.client.ClientResponse;
@@ -39,6 +39,7 @@ public class RequestProxyServiceImpl implements RequestProxyService {
     private final Object clientLock = new Object();
     private boolean requestLogging;
     private final ReposeInstanceInfo instanceInfo;
+    private boolean rewriteHostHeader = false;
 
     @Autowired
     public RequestProxyServiceImpl(@Qualifier("reposeInstanceInfo") ReposeInstanceInfo instanceInfo) {
@@ -77,7 +78,7 @@ public class RequestProxyServiceImpl implements RequestProxyService {
         TargetHostInfo host = new TargetHostInfo(targetHost);
         final String target = host.getProxiedHostUrl().toExternalForm() + request.getRequestURI();
 
-        JerseyRequestProcessor processor = new JerseyRequestProcessor(request, host.getProxiedHostUri());
+        JerseyRequestProcessor processor = new JerseyRequestProcessor(request, host.getProxiedHostUri(), rewriteHostHeader);
         try {
             WebResource resource = getClient().resource(target);
             WebResource.Builder builder = processor.process(resource);
@@ -173,4 +174,9 @@ public class RequestProxyServiceImpl implements RequestProxyService {
             throw new ProxyRequestException("Error dispatching PUT request", ex);
         }
     }
+
+  @Override
+  public void setRewriteHostHeader(boolean value) {
+    rewriteHostHeader = value;
+  }
 }

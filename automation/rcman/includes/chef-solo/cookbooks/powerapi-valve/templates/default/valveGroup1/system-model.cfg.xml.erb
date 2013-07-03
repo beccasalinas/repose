@@ -9,12 +9,17 @@
         <filter name="dist-datastore" />
         <filter name="versioning" />
         <filter name="client-auth" configuration="client-auth-v1.1.cfg.xml" />
-        <filter name="uri-normalization" />
         <filter name="header-normalization"/>
+        <filter name="uri-normalization" />
+        <filter name="uri-normalization" uri-regex='/only_media_variant/.*' configuration='only-media-variant-uri-normalization.xml'/>
+        <filter name="uri-normalization" uri-regex='/uri_normalization_with_media/.*' configuration='uri-normalization-w-media.xml'/>
+        <filter name="uri-normalization" uri-regex='/empty_uri_target_with_media/.*' configuration='empty-uri-target-w-media-uri-normalization.xml'/>
+        <filter name="uri-normalization" uri-regex='/no_http_methods_with_media/.*' configuration='no-http-methods-w-media-uri-normalization.xml'/>
+        <filter name="uri-normalization" uri-regex='/no_regex_with_media/.*' configuration='no-regex-w-media-uri-normalization.xml'/>
     </filters>
     <destinations>
-      <endpoint id="service1" protocol="http" hostname="50.57.189.15" root-path="/v1" port="8080" default="true"/>
-      <endpoint id="service2" protocol="http" hostname="50.57.189.15" root-path="/v2" port="8080" default="true"/>
+      <endpoint id="service1" protocol="http" hostname="50.57.189.15" root-path="/v1" port="8080"/>
+      <endpoint id="service2" protocol="http" hostname="50.57.189.15" root-path="/v2" port="8080"/>
       <endpoint id="service3" protocol="http" hostname="50.57.189.15" root-path="/" port="8080" default="true"/>
     </destinations>
   </repose-cluster>
@@ -25,15 +30,15 @@
     </nodes>
     <filters>
         <filter name="dist-datastore" />
-        <filter name="versioning" />
+        <filter name="versioning" configuration="versioning-2.cfg.xml"/>
         <filter name="client-auth" configuration="client-auth-keystone.cfg.xml"/>
         <filter name="client-authorization" />
         <filter name="uri-normalization" />
         <filter name="header-normalization"/>
     </filters>
     <destinations>
-      <endpoint id="service1" protocol="https" hostname="50.57.189.15" root-path="/v1" port="8181" default="true"/>
-      <endpoint id="service2" protocol="https" hostname="50.57.189.15" root-path="/v2" port="8181" default="true"/>
+      <endpoint id="service1" protocol="https" hostname="50.57.189.15" root-path="/v1" port="8181"/>
+      <endpoint id="service2" protocol="https" hostname="50.57.189.15" root-path="/v2" port="8181"/>
       <endpoint id="service3" protocol="https" hostname="50.57.189.15" root-path="/" port="8181" default="true"/>
     </destinations>
   </repose-cluster>

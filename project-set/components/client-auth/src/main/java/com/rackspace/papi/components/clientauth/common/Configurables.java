@@ -4,6 +4,8 @@ import com.rackspace.papi.commons.util.regex.KeyedRegexExtractor;
 
 /**
  * @author fran
+ *
+ * This class manages information from config files related to auth.
  */
 public class Configurables {
     private final boolean delegable;
@@ -12,14 +14,23 @@ public class Configurables {
     private final boolean tenanted;
     private final long groupCacheTtl;
     private final long userCacheTtl;
+    private final long tokenCacheTtl;
+    private final boolean requestGroups;
+    private final EndpointsConfiguration endpointsConfiguration;
 
-    public Configurables(boolean delegable, String authServiceUri, KeyedRegexExtractor<String> keyedRegexExtractor, boolean tenanted, long groupCacheTtl, long tokenCacheTtl) {
+
+    public Configurables(boolean delegable, String authServiceUri, KeyedRegexExtractor<String> keyedRegexExtractor,
+            boolean tenanted, long groupCacheTtl, long tokenCacheTtl, long usrCacheTtl, boolean requestGroups,
+            EndpointsConfiguration endpointsConfiguration) {
         this.delegable = delegable;
         this.authServiceUri = authServiceUri;
         this.keyedRegexExtractor = keyedRegexExtractor;
         this.tenanted = tenanted;
         this.groupCacheTtl = groupCacheTtl;
-        this.userCacheTtl = tokenCacheTtl;
+        this.userCacheTtl = usrCacheTtl;
+        this.tokenCacheTtl = tokenCacheTtl;
+        this.requestGroups=requestGroups;
+        this.endpointsConfiguration = endpointsConfiguration;
     }
 
     public boolean isDelegable() {
@@ -41,8 +52,20 @@ public class Configurables {
     public long getGroupCacheTtl() {
         return groupCacheTtl;
     }
+    
+    public long getTokenCacheTtl() {
+       return tokenCacheTtl;
+    }
 
     public long getUserCacheTtl() {
         return userCacheTtl;
+    }
+    
+    public boolean isRequestGroups() {
+        return requestGroups;
+    }
+
+    public EndpointsConfiguration getEndpointsConfiguration() {
+        return endpointsConfiguration;
     }
 }

@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<validators multi-role-match="true" 
-            xmlns='http://openrepose.org/repose/validator/v1.0'
-            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-            xsi:schemaLocation="http://openrepose.org/repose/validator/v1.0 https://raw.github.com/rackspace/repose/master/project-set/extensions/api-validator/src/main/resources/META-INF/schema/config/validator-configuration.xsd" >
-   <validator 
+<validators  xmlns="http://openrepose.org/repose/validator/v1.0" multi-role-match="true" version="2">
+   <validator
       role="default"
       default="true"
       wadl="file://my/wadl/file.wadl" 
@@ -18,10 +15,11 @@
       remove-dups="true"
       xpath-version="2"
       xsl-engine="XalanC"
-      use-saxon="false"
+      xsd-engine="Xerces"
       enable-ignore-xsd-extension="false"
       join-xpath-checks="false"
-      validator-name="testName"/>
+      validator-name="testName"
+      check-headers="true"/>
    <validator role="other" default="false" wadl="file://a/different/wadl/file.wadl"/>
    <validator
       role="embedded"
@@ -29,8 +27,7 @@
       check-well-formed="false"
       check-xsd-grammar="true"
       check-elements="true"
-      check-headers="true"
-      use-saxon="false">
+      check-headers="true">
         <application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
            xmlns:xs="http://www.w3.org/2001/XMLSchema" 
            xmlns="http://wadl.dev.java.net/2009/02"

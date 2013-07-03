@@ -11,13 +11,27 @@ import com.rackspace.papi.commons.util.StringUtilities;
 import com.rackspace.papi.commons.util.http.HttpStatusCode;
 import com.rackspace.papi.commons.util.http.ServiceClient;
 import com.rackspace.papi.commons.util.http.ServiceClientResponse;
-import org.openstack.docs.identity.api.v2.*;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
+import org.openstack.docs.identity.api.v2.AuthenticateResponse;
+import org.openstack.docs.identity.api.v2.AuthenticationRequest;
+import org.openstack.docs.identity.api.v2.Endpoint;
+import org.openstack.docs.identity.api.v2.EndpointList;
+import org.openstack.docs.identity.api.v2.ObjectFactory;
+import org.openstack.docs.identity.api.v2.PasswordCredentialsRequiredUsername;
+import org.openstack.docs.identity.api.v2.Token;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBElement;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author fran
@@ -27,7 +41,9 @@ public class AuthenticationServiceClient implements AuthenticationService {
    private static final Logger LOG = LoggerFactory.getLogger(AuthenticationServiceClient.class);
    private static final String AUTH_TOKEN_HEADER = "X-Auth-Token";
    private static final String ACCEPT_HEADER = "Accept";
-   private final String targetHostUri;
+   private static final String TOKENS = "/tokens/";
+    public static final String ENDPOINTS = "/endpoints";
+    private final String targetHostUri;
    private final ServiceClient serviceClient;
    private final ResponseUnmarshaller openStackCoreResponseUnmarshaller;
    private final ResponseUnmarshaller openStackGroupsResponseUnmarshaller;
@@ -36,10 +52,11 @@ public class AuthenticationServiceClient implements AuthenticationService {
 
    public AuthenticationServiceClient(String targetHostUri, String username, String password, String tenantId,
            ResponseUnmarshaller openStackCoreResponseUnmarshaller,
-           ResponseUnmarshaller openStackGroupsResponseUnmarshaller) {
+           ResponseUnmarshaller openStackGroupsResponseUnmarshaller,
+            ServiceClient serviceClient) {
       this.openStackCoreResponseUnmarshaller = openStackCoreResponseUnmarshaller;
       this.openStackGroupsResponseUnmarshaller = openStackGroupsResponseUnmarshaller;
-      this.serviceClient = new ServiceClient();
+      this.serviceClient = serviceClient;
       this.targetHostUri = targetHostUri;
 
       ObjectFactory objectFactory = new ObjectFactory();
@@ -61,7 +78,7 @@ public class AuthenticationServiceClient implements AuthenticationService {
    }
 
    @Override
-   public AuthToken validateToken(String tenant, String userToken) {
+   public AuthToken validateToken(String tenant, String userToken) { //this is where we ask auth service if token is valid
 
       OpenStackToken token = null;
 
@@ -92,11 +109,11 @@ public class AuthenticationServiceClient implements AuthenticationService {
 
          case INTERNAL_SERVER_ERROR:
             // Internal server error from auth
-            LOG.warn("Internal server error from auth. " + serviceResponse.getStatusCode());
+            LOG.warn("Authentication Service returned internal server error: " + serviceResponse.getStatusCode());
             break;
 
          default:
-            LOG.warn("Unexpected response status code: " + serviceResponse.getStatusCode());
+            LOG.warn("Authentication Service returned an unexpected response status code: " + serviceResponse.getStatusCode());
             break;
       }
 
@@ -110,9 +127,9 @@ public class AuthenticationServiceClient implements AuthenticationService {
       headers.put(ACCEPT_HEADER, MediaType.APPLICATION_XML);
       headers.put(AUTH_TOKEN_HEADER, getAdminToken(force));
       if (StringUtilities.isBlank(tenant)) {
-         serviceResponse = serviceClient.get(targetHostUri + "/tokens/" + userToken, headers);
+         serviceResponse = serviceClient.get(targetHostUri + TOKENS + userToken, headers);
       } else {
-         serviceResponse = serviceClient.get(targetHostUri + "/tokens/" + userToken, headers, "belongsTo", tenant);
+         serviceResponse = serviceClient.get(targetHostUri + TOKENS + userToken, headers, "belongsTo", tenant);
 
       }
 
@@ -135,7 +152,8 @@ public class AuthenticationServiceClient implements AuthenticationService {
       headers.put(ACCEPT_HEADER, MediaType.APPLICATION_XML);
       headers.put(AUTH_TOKEN_HEADER, getAdminToken(false));
 
-      ServiceClientResponse<EndpointList> endpointListResponse = serviceClient.get(targetHostUri + "/tokens/" + userToken + "/endpoints", headers);
+      ServiceClientResponse<EndpointList> endpointListResponse = serviceClient.get(targetHostUri + TOKENS + userToken +
+                                                                                           ENDPOINTS, headers);
       List<Endpoint> endpointList = new ArrayList<Endpoint>();
 
       switch (HttpStatusCode.fromInt(endpointListResponse.getStatusCode())) {
@@ -144,10 +162,11 @@ public class AuthenticationServiceClient implements AuthenticationService {
 
             break;
          case UNAUTHORIZED:
-            LOG.warn("Unable to get endpoints for user: " + endpointListResponse.getStatusCode() + " :admin token expired. Retrieving new admin token and retrying endpoints retrieval...");
+            LOG.warn("Unable to get endpoints for user: " + endpointListResponse.getStatusCode() + " :admin token expired. " +
+                             "Retrieving new admin token and retrying endpoints retrieval...");
 
             headers.put(AUTH_TOKEN_HEADER, getAdminToken(true));
-            endpointListResponse = serviceClient.get(targetHostUri + "/tokens/" + userToken + "/endpoints", headers);
+            endpointListResponse = serviceClient.get(targetHostUri + TOKENS + userToken + ENDPOINTS, headers);
 
             if (endpointListResponse.getStatusCode() == HttpStatusCode.ACCEPTED.intValue()) {
                endpointList = getEndpointList(endpointListResponse);
@@ -163,6 +182,63 @@ public class AuthenticationServiceClient implements AuthenticationService {
 
       return endpointList;
    }
+
+    // Method to take in the format and token, then use that info to get the endpoints catalog from auth, and return it encoded.
+    @Override
+    public String getBase64EndpointsStringForHeaders(String userToken, String format) {
+        final Map<String, String> headers = new HashMap<String, String>();
+
+        //defaulting to json format
+        if (format.equalsIgnoreCase("xml")) {
+            format = MediaType.APPLICATION_XML;
+        } else {
+            format = MediaType.APPLICATION_JSON;
+        }
+
+        //telling the service what format to send the endpoints to us in
+        headers.put(ACCEPT_HEADER, format);
+        headers.put(AUTH_TOKEN_HEADER, getAdminToken(false));
+
+        ServiceClientResponse serviceClientResponse = serviceClient.get(targetHostUri + TOKENS + userToken + ENDPOINTS, headers);
+
+        String rawEndpointsData = "";
+
+        switch (HttpStatusCode.fromInt(serviceClientResponse.getStatusCode())) {
+            case OK:
+                rawEndpointsData = convertStreamToBase64String(serviceClientResponse.getData());
+                break;
+            case UNAUTHORIZED:
+                LOG.warn("Unable to get endpoints for user: " + serviceClientResponse.getStatusCode() + " :admin token expired. Retrieving new admin token and retrying endpoints retrieval...");
+
+                headers.put(AUTH_TOKEN_HEADER, getAdminToken(true));
+                serviceClientResponse = serviceClient.get(targetHostUri + TOKENS + userToken + ENDPOINTS, headers);
+
+                if (serviceClientResponse.getStatusCode() == HttpStatusCode.ACCEPTED.intValue()) {
+                    rawEndpointsData = convertStreamToBase64String(serviceClientResponse.getData());
+                } else {
+                    LOG.warn("Still unable to get endpoints: " + serviceClientResponse.getStatusCode());
+                    throw new AuthServiceException("Unable to retrieve service catalog for user with configured Admin credentials");
+                }
+                break;
+            default:
+                LOG.warn("Unable to get endpoints for token. Status code: " + serviceClientResponse.getStatusCode());
+                break;
+        }
+
+        return rawEndpointsData;
+    }
+
+    private String convertStreamToBase64String(InputStream inputStream) {
+        StringWriter stringWriter = new StringWriter();
+        try {
+            IOUtils.copy(inputStream, stringWriter, "UTF8");
+        } catch (IOException e) {
+            LOG.error(e.getMessage(), "Unable to copy stream.");
+        }
+        String stringFromStream = stringWriter.toString();
+        byte[] encodedString = Base64.encodeBase64(stringFromStream.getBytes());
+        return new String(encodedString);
+    }
 
    private List<Endpoint> getEndpointList(ServiceClientResponse<EndpointList> endpointListResponse) {
       List<Endpoint> endpointList = new ArrayList<Endpoint>();

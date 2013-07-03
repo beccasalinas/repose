@@ -14,6 +14,7 @@ import com.rackspace.papi.service.datastore.DatastoreService;
 import com.rackspace.repose.service.ratelimit.RateLimitingServiceFactory;
 import com.rackspace.repose.service.ratelimit.cache.ManagedRateLimitCache;
 import com.rackspace.repose.service.ratelimit.cache.RateLimitCache;
+import com.rackspace.repose.service.ratelimit.config.DatastoreType;
 import com.rackspace.repose.service.ratelimit.config.RateLimitingConfiguration;
 import com.rackspace.repose.service.ratelimit.RateLimitingService;
 
@@ -21,6 +22,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
 
+/* Responsible for creating rate limit handlers that provide datastoreservice and listener to rate limit configuration */
 public class RateLimitingHandlerFactory extends AbstractConfiguredFilterHandlerFactory<RateLimitingHandler> {
 
     private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(RateLimitingHandlerFactory.class);
@@ -44,17 +46,17 @@ public class RateLimitingHandlerFactory extends AbstractConfiguredFilterHandlerF
         return listenerMap;
     }
 
-    private Datastore getDatastore(String name) {
+    private Datastore getDatastore(DatastoreType datastoreType) {
         Datastore targetDatastore;
 
         final Collection<DatastoreManager> distributedDatastores = datastoreService.availableDistributedDatastores();
 
-        if (StringUtilities.isNotBlank(name)) {
-            LOG.info("Requesting datastore " + name);
-            DatastoreManager datastore = datastoreService.getDatastore(name);
+        if (StringUtilities.isNotBlank(datastoreType.value())) {
+            LOG.info("Requesting datastore " + datastoreType);
+            DatastoreManager datastore = datastoreService.getDatastore(datastoreType.value());
 
             if (datastore != null) {
-                LOG.info("Using requested datastore " + name);
+                LOG.info("Using requested datastore " + datastoreType);
                 return datastore.getDatastore();
             }
 
@@ -110,6 +112,6 @@ public class RateLimitingHandlerFactory extends AbstractConfiguredFilterHandlerF
         final RateLimitingServiceHelper serviceHelper = new RateLimitingServiceHelper(service, activeLimitsWriter, combinedLimitsWriter);
         boolean includeAbsoluteLimits = rateLimitingConfig.getRequestEndpoint().isIncludeAbsoluteLimits();
 
-        return new RateLimitingHandler(serviceHelper, includeAbsoluteLimits, describeLimitsUriRegex, rateLimitingConfig.isOverLimit429ResponseCode());
+        return new RateLimitingHandler(serviceHelper, includeAbsoluteLimits, describeLimitsUriRegex, rateLimitingConfig.isOverLimit429ResponseCode(),rateLimitingConfig.getDatastoreWarnLimit().intValue());
     }
 }
