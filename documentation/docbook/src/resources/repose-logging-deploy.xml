@@ -126,7 +126,7 @@
                 This handbook is focused on one &PRODNAME; component.
                 Other &PRODNAME; components are documented in companion handbooks.
             </para></chapter>
-    <chapter xml:id="Installation-000">
+    <chapter xml:id="Installation">
         <title>Installation</title>
         <para> &PRODNAME; also offers a quick <emphasis role="bold"
                 >non-production</emphasis> method of installing
@@ -174,7 +174,7 @@
                 if running the ROOT.war deployment </para>
         </section>
         
-        <section xml:id="Installation-000">
+        <section xml:id="Installing_Repose">
             <title> Installing Repose</title>
             <para> Repose can either be installed through a linux
                 package manager (RPM or Debian) or downloaded from
@@ -231,7 +231,7 @@
                 </listitem>
             </itemizedlist> </section>
             
-            <section xml:id="Introduction-000"> 
+            <section xml:id="Paths_for_Default_Install_Dirs"> 
                <title> Paths for Default Installation Directories </title>
 <para>The directories below are given to you during the installation process. These directories cannot be customized. You can find these &PRODNAME;
     directories by following the appropriate paths:</para>

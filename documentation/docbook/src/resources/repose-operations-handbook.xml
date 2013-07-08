@@ -115,7 +115,7 @@
             information that will help you understand &PRODNAME;,but
             you must adapt this information to suit your own
             configuration. </para></chapter>
-    <chapter xml:id="Installation-000">
+    <chapter xml:id="Installation_Intro">
         <title>Installation Introduction</title>
         <para> &PRODNAME; also offers a quick <emphasis role="italic"
                 >non-production</emphasis> method of installing

@@ -101,21 +101,20 @@
     <!-- naming this section xml:id="Introduction-000" to make it the first page opened in HTML, matching <webhelpDefaultTopic>Introduction-000.html</webhelpDefaultTopic> in pom.xml -->
     <chapter xml:id="Introduction-000">
         <title>Introduction to the Translation Component of &PRODNAME;</title>
+        <para>WRITEME</para>
     </chapter>
     <chapter xml:id="Configuration-d1e365">
         <title>Configuration</title>
         <para> -</para> 
         <section xml:id="Customizing_Translation_Configuration-d1e375">
         <title>Customizing a Translation Configuration</title>
-        <example>
-            <programlistingco>
-                    <programlisting language="xml">
+
+    
+           <programlisting language="xml">
 <xi:include href="samples/repose-translation.cfg.xml" parse="text"/>
             </programlisting>
-                </programlistingco>
-        </example>
-        <para> </para>
-        <calloutlist/>
+      
+        
         </section>
             <section xml:id="Customizing_Translation_Stylesheet-d1e385">
                 <title>Customizing a Translation Stylesheet</title>
@@ -162,7 +161,7 @@
         </section>
         <section xml:id="Translate_XML2HTML-d1e119">
             <title>Translating XML to HTML </title>
-            <para>. <example>
+            <para>. 
                     <important>
                         <para> This cURL example requires a file named
                                 <code>version.xml</code>. You can see
@@ -177,7 +176,7 @@
                     <programlisting language="xml">
 <xi:include href="samples/repose-translation-curl-confirm-xml2html.xml" parse="text"/>
 </programlisting>
-                </example></para></section></chapter>
+                </para></section></chapter>
 
 <chapter xml:id="Working_JSON-111">
             <title>Working With JSON</title>
