@@ -117,14 +117,45 @@
                     linkend="References-d1e994"/>. </para>
             </note>
             <glossary>
-                <title>&PRODNAME; Components</title>
-                <para>
-                    <emphasis>
-                        Components described here may not yet be available; 
-                        familiarity with their basic ideas will help you plan for future
-                        uses of &PRODNAME;.
-                    </emphasis>
-                </para>
+                <title>&PRODNAME; Terms</title>
+  
+                <glossentry xml:id="API-Endpoint">
+                    <glossterm> <emphasis role="bold"> API Endpoint</emphasis></glossterm>
+                    <glossdef>
+                        <para>
+                 Does nothing more than define the address or 
+                 connection point to a web service. It is typically
+                 represented by a simple HTTP URL string. In the context
+                 of a REST endpoint, the endpoint would contain the 
+                 requisite GET, PUT, POST and DELETE methods (as applicable).    
+                        </para>
+                    </glossdef>
+                </glossentry>
+                <glossentry xml:id="Accept-Header">
+                    <glossterm> <emphasis role="bold"> Accept Header</emphasis></glossterm>
+                    <glossdef>
+            
+  <para>The Accept header contains a list of MIME media 
+      types that will be accepted by the user agent. We 
+      can use the Accept header to find out the file types
+      that can be handled by the user agent.
+</para> 
+                    </glossdef>
+                </glossentry>
+                <glossentry xml:id="Artifact">
+                    <glossterm><emphasis role="bold"> Artifact</emphasis></glossterm>
+                    <glossdef>
+                 <para>
+                 An artifact may be a bundle of one or more components.
+                 </para>
+                    </glossdef>
+                </glossentry>
+                <glossentry xml:id="C">
+                    <glossterm><emphasis role="bold"> </emphasis> </glossterm>
+                    <glossdef>
+                        <para></para>
+                    </glossdef>
+                </glossentry>
                 <glossentry xml:id="Client-AuthN-d1e015">
                 <glossterm><emphasis role="bold">Client Authentication</emphasis></glossterm>
                 <glossdef>
