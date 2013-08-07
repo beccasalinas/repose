@@ -131,8 +131,15 @@
             information of the HTTP requests that are sent to Repose
             and responses through Repose. It is based on the Apache
             HTTPD Logging Standard.</para>
-        <para><emphasis role="italic">High Level Repose
-            </emphasis></para> </chapter>
+        <para/> 
+    
+    <mediaobject>
+        <imageobject>
+            <imagedata fileref="figures/logging-revised.png" format="PNG" align="center"/>
+            </imageobject>
+    </mediaobject>
+    
+    </chapter>
         
        
         
@@ -465,6 +472,12 @@ configuration the user can specify the following:</para>
                 <para> </para>
             </callout>
         </calloutlist>
+                <example>
+                    <title> System Model With Logging Configuration</title>
+                    <programlisting language="xml">
+                     <xi:include href="samples/repose-logging-system-model.xml" parse="text"></xi:include>
+                    </programlisting>
+                </example>
             </chapter>
     <chapter xml:id="Formatting_Log-d1e431">
         <title>Logging Behavior</title>                 
