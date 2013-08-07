@@ -136,10 +136,7 @@
             deployment strategies. Repose offers two methods for
             deployment, both of which, are described below.</para>
         <para/>
-        <para>
-          
-            <emphasis role="bold">Proxy Server
-            (Valve)</emphasis></para>
+        <para> Proxy Server (Valve)</para>
         
         <para>The Proxy Server (Valve) deployment strategy runs
             &PRODNAME; as a standalone proxy server which will sit
@@ -148,8 +145,7 @@
             a different host than the origin service. Proxy Server
             (Valve) is a .jar file. </para>
         <para>
-            <emphasis role="bold"> ROOT.war</emphasis>
-        </para>
+            <emphasis role="bold"> </emphasis>ROOT.war </para>
         <para>&PRODNAME; will run inside a third party servlet
             container (e.g. tomcat or glassfish). This strategy allows
             &PRODNAME; to run on the same container as the origin
@@ -162,12 +158,12 @@
         
         
         <chapter xml:id="Installation-Repose-000">
-            <title> Installing Repose</title>
+            <title> Installation </title>
             <para> Repose can either be installed through a Linux
                 package manager (RPM or Debian) or downloaded from
                 GitHub. As previously mentioned,you can choose to
                 install Repose as either ROOT.war in an existing
-                servlet container or the Valve Proxy server. Choose
+                servlet container, or the Valve Proxy server. Choose
                     <emphasis role="italic">one</emphasis> of the
                 following installations: </para>
             <para><emphasis role="bold"> Installing ROOT.war From a

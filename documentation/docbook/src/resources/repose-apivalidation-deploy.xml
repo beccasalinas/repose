@@ -643,8 +643,8 @@
                 </para>
                 <para> A valid response messaging configuration resembles the following
                 example: </para>
-                <example>
-                    <title>Response Messaging Configuration</title>
+                
+                <example>    <title>Response Messaging Configuration</title>
 <programlisting language="xml">
 <xi:include href="samples/repose-apivalidation-response-messaging.cfg.xml" parse="text"/>
 </programlisting>

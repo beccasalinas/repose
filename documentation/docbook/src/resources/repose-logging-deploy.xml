@@ -38,7 +38,7 @@
       xmlns:html="http://www.w3.org/1999/xhtml"
       xml:id="Repose-Logging-Deployment-Guide">
     <?rax pdf.url="../../repose-logging-deploy.pdf"?>
-    <title>&PRODNAME; Operations Handbook</title>
+    <title>&PRODNAME; HTTP Logging Filter</title>
     <!-- set watermark on cover and left margin -->
     <?rax status.bar.text.font.size="40px" status.bar.text="DRAFT"?>
     <!-- size line1 & line2 of title on PDF cover -->
@@ -61,9 +61,9 @@
             <holder>2013</holder>
             <holder>Rackspace US, Inc.</holder>
         </copyright>
-        <releaseinfo>v1.0</releaseinfo>
+        <releaseinfo>v2.8.1</releaseinfo>
         <productname>&PRODNAME;</productname>
-        <pubdate>2013-04-29</pubdate>
+        <pubdate>2013-07-23</pubdate>
         <legalnotice role="apache2">
             <annotation>
                 <remark>Copyright details are filled in by the template.</remark>
@@ -117,207 +117,305 @@
     <chapter xml:id="Overview-d1e85">
         <title>About This Document</title>
             <para> The purpose of this handbook is to facilitate the
-            installation of &PRODNAME; offer operation guidelines, and
-            present troubleshooting methods.  This handbook is not a
-            tutorial. It provides basic information that will help you
-            understand  &PRODNAME;,but you must adapt this information
-            to suit your own configuration. </para>
-            <para>
-                This handbook is focused on one &PRODNAME; component.
-                Other &PRODNAME; components are documented in companion handbooks.
-            </para></chapter>
+            installation and introduction of the logging component.
+            This handbook is not a tutorial. It provides basic
+            information that will help you understand logging,but you
+            must adapt this information to suit your own
+            configuration. </para>
+            <para> This handbook is focused on one &PRODNAME; filter.
+            Other &PRODNAME; filters are documented in companion
+            handbooks. </para></chapter>
     <chapter xml:id="Installation">
-        <title>Installation</title>
-        <para> &PRODNAME; also offers a quick <emphasis role="bold"
-                >non-production</emphasis> method of installing
-            &PRODNAME; for informational use only. Follow the link to
-            the Repose Sandbox to begin using this method:*****
-        </para>
-        <para>Below are deployment strategies intended for <emphasis
-                role="bold">production</emphasis> use of
-            &PRODNAME;:</para>
-        <para/>
+        <title>What is the HTTP Logging Filter?</title>
+        <para> Repose's HTTP Logging Filter allows you to log
+            information of the HTTP requests that are sent to Repose
+            and responses through Repose. It is based on the Apache
+            HTTPD Logging Standard.</para>
+        <para><emphasis role="italic">High Level Repose
+            </emphasis></para> </chapter>
+        
+       
+        
+        
+        
+        
    
- 
-    
-        <para><emphasis role="bold">Proxy Server
-            (Valve)</emphasis></para>
-        <para>The Proxy Server (Valve) deployment strategy runs
-            &PRODNAME; as a standalone proxy server which will sit
-            between the requester and the origin service. This
-            deployment strategy runs &PRODNAME; on a different port or
-            a different host than the origin service. Proxy Server
-            (Valve) is a .jar file. </para>
-        <para/>
+        
+        <chapter xml:id="WHAT-Does-it-do">
+            <title> What Does HTTP Logging Do?</title>
+            <para> The HTTP Logging filter can be configured to log
+            information from the request URI and headers but not
+            request message content. The HTTP Logging component can
+            log static text that is specified in the HTTP-log format
+            attribute and specific information about the
+            request/response. </para>
+        <para> &PRODNAME;'s HTTP logging component implements a subset
+            of the Apache logging functionality described at <link
+                xlink:href="http://httpd.apache.org/docs/2.2/mod/mod_log_config.html"
+                >http://httpd.apache.org/docs/2.2/mod/mod_log_config.html</link>.
+            The table below lists the request and response information
+            you may choose to log: </para>
         <para>
-            <emphasis role="bold"> ROOT.war</emphasis>
+            <table width="1032">
+                <caption> Logging Options</caption>
+                <col width="10%"/>
+                <col width="50%"/>
+                <col width="2%"/>
+                <thead>
+                    <tr>
+                        <td>Format String</td>
+                        <td>Description</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <code>\t</code>
+                        </td>
+                        <td>
+                            <para> Tab </para>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>\n</code>
+                        </td>
+                        <td>
+                            <para> Newline </para>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>%%</code>
+                        </td>
+                        <td>
+                            <para> Percent sign </para>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>%a</code>
+                        </td>
+                        <td>
+                            <para> Remote IP address </para>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>%A</code>
+                        </td>
+                        <td>
+                            <para> Local IP address </para>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>%b</code>
+                        </td>
+                        <td>
+                            <para> Size of response in bytes,
+                                excluding HTTP headers </para>
+                            <para>
+                                <emphasis role="italic">In CLF format:
+                                   uses "-" rather than zero when no
+                                   bytes are sent.</emphasis>
+                            </para>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>%h</code>
+                        </td>
+                        <td>
+                            <para> Remote host </para>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><code>%{header}i </code>
+                            <emphasis role="italic"
+                                >required</emphasis></td>
+                        <td><para>Request header. Parameters type. If not
+                            specified, then the header value is as
+                            is.</para></td>
+                    </tr>
+                    <tr>
+                        <td><code>%{header type out- format}i </code>
+                            <emphasis role="italic">
+                                optional</emphasis></td>
+                        <td> <para>Currently, the only type supported is DATE
+                            . 
+                            Out and In date formats supported are
+                            RFC_1123(HTTP-Date) and ISO_8601</para></td>
+                    </tr>
+                    <tr>
+                        <td><code>%{header type out format in format}i  </code>
+                            <emphasis role="italic"
+                                >optional</emphasis></td>
+                        <td><para>If type is specified, the out-format is
+                            required. In-format is optional and
+                            defaults to RFC_1123for DATE types if not
+                            specified.</para></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>%m</code>
+                        </td>
+                        <td>
+                            <para> Request method </para>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><code>%{header}o </code>
+                            <emphasis role="italic"
+                                >required</emphasis></td>
+                        
+                            <td><para>Response header. Parameters type,
+                                out-format and in format are optional.
+                                If not specified, then the header
+                                value is as is.</para></td>
+                        
+                    </tr>
+                    <tr>
+                        <td><code>% {header type out-format}o   </code>
+                            <emphasis role="italic"
+                                >optional</emphasis></td>
+                        <td><para>Currently, the only type supported is
+                            DATE. Out and In date formats supported
+                            are RFC_1123 (HTTP-Date) and
+                            ISO_8601.</para></td>
+                    </tr>
+                    <tr>
+                        <td><code>%{header type out-format
+                                in-format}</code>
+                            <emphasis role="italic">
+                                optional</emphasis></td>
+                        <td>
+                            <para>If type is specified, the out-format is
+                            required. The In-format is optional and
+                            defaults to RFC_1123 for DATE types if not
+                            specified.</para>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>%p</code>
+                        </td>
+                        <td>
+                            <para> Canonical port of the server
+                                serving the request </para>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>%q</code>
+                        </td>
+                        <td>
+                            <para> Query string </para>
+                            <para>
+                                <emphasis role="italic">Prepended with
+                                   "?" if a query string exists;
+                                   otherwise, an empty
+                                   string.</emphasis>
+                            </para>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>%s</code>
+                        </td>
+                        <td>
+                            <para> Status </para>
+                            <para>
+                                <emphasis role="italic">For
+                                   internally-redirected requests,
+                                   this is the status of the original
+                                   request.</emphasis>
+                            </para>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>%t</code>
+                        </td>
+                        <td>
+                            <para> Time the request was received </para>
+                            <para>
+                                <emphasis role="italic">Standard
+                                   English format. 24 hour
+                                   format</emphasis>
+                            </para>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><code>%T</code></td>
+                        <td>The time taken to serve the request, in
+                            seconds</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>%u</code>
+                        </td>
+                        <td>
+                            <para> Remote user </para>
+                            <para>
+                                <emphasis role="italic">May be bogus
+                                   if status (<code>%s</code>) is
+                                   401.</emphasis>
+                            </para>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <code>%U</code>
+                        </td>
+                        <td>
+                            <para> URL path requested, excluding any
+                                query string </para>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </para>
-        <para> &PRODNAME; will run inside a third party servlet
-            container (e.g. tomcat or glassfish). This strategy allows
-            &PRODNAME; to run on the same container as the origin
-            service.</para>
-        <para> The ROOT.war artifact is a Web application ARchive
-            (WAR). It contains all the components needed to install
-            &PRODNAME; into a running application container. One of
-            these components is a default web.xml that can start up
-            &PRODNAME; in the standard configuration model.</para>
-        <section xml:id="Introduction-000">
-            <title> Prerequisites for Repose Installation</title>
-            <para>Before getting started, make sure you have the
-                following installed on your local machine:</para>
-            <para>
-                <emphasis role="bold">Java OpenJDK 1.6 (or Oracle's
-                    JRE)</emphasis></para>
-            <para>
-                <emphasis role="bold">Tomcat 7 or higher( or any
-                    Servlet Spec 3- Compliant Container)</emphasis>,
-                if running the ROOT.war deployment </para>
-        </section>
-        
-        <section xml:id="Installing_Repose">
-            <title> Installing Repose</title>
-            <para> Repose can either be installed through a linux
-                package manager (RPM or Debian) or downloaded from
-                GitHub. As previously mentioned, you can choose to
-                install Repose as either ROOT.war in an existing
-                servlet container or the Valve Proxy server. Choose
-                    <emphasis role="italic">one</emphasis> of the
-                following installations: </para>
-            <para><emphasis role="bold"> Installing ROOT.war From a
-                    Linux Package Manager (RPM)</emphasis>
-            </para>
-            <itemizedlist>
-                <listitem>
-                    <para>The instructions for installing ROOT.war
-                        from RPM are located at RPM installing
-                        ROOT.war </para>
-                </listitem>
-            </itemizedlist>
-            <para>
-                <emphasis role="bold">Installing Valve Proxy Server
-                    from a Linux Package Manager (RPM or
-                    Debian)</emphasis></para>
-            <itemizedlist>
-                <listitem>
-                    <para>The instructions for installing Valve Proxy
-                        Server from RPM are located at RPM Installing
-                        Valve Proxy Server.</para>
-                </listitem>
-                <listitem>
-                    <para>The instruction for installing Valve Proxy
-                        Server from Debian are located at Debian
-                        Installing Valve Proxy Server.</para>
-                </listitem>
-            </itemizedlist>
-            <para><emphasis role="bold">Installing Repose from
-                    GitHub</emphasis>
-            </para>
-            <itemizedlist>
-                <para>Repose can be downloaded from ******** and built
-                    with Maven. Once built, the following binaries are
-                    created for the different installations: </para>
-                <listitem>
-                    <para><emphasis role="bold">Root.WAR</emphasis> -
-                        The ROOT.war is built at
-                        project-set/core/web-application/target/ROOT.war.
-                    </para>
-                </listitem>
-                <listitem>
-                    <para><emphasis role="bold">Valve Proxy
-                            Server</emphasis> - The Valve jar file is
-                        located at
-                        project-set/core/valve/target/repose-valve.jar.
-                    </para>
-                </listitem>
-            </itemizedlist> </section>
-            
-            <section xml:id="Paths_for_Default_Install_Dirs"> 
-               <title> Paths for Default Installation Directories </title>
-<para>The directories below are given to you during the installation process. These directories cannot be customized. You can find these &PRODNAME;
-    directories by following the appropriate paths:</para>
-            <para>
-                <itemizedlist>
-                    <listitem>
-                        <para>Repose valve jar is installed in<code>
-                                /usr/share/lib/repose.</code></para>
-                    </listitem>
-                    <listitem>
-                        <para>Repose Root.war is installed
-                                in <code>/var/lib/tomcat7/webapps.</code></para>
-                    </listitem>
-                    <listitem>
-                        <para>Repose start up script in
-                                <code> /etc/init.d.</code></para>
-                        <para/>
-                        <para>The &PRODNAME; <emphasis role="bold"
-                                >default config. directory</emphasis>
-                            is set to <filename>/etc/repose</filename>
-                            and can be customized in the following
-                            methods:</para>
-                    </listitem>
-                    <listitem>
-                        <para>For the<emphasis role="bold"> Valve
-                                Installation</emphasis>, the config
-                            directory can be set with the
-                                <filename>-c</filename> command line
-                            option. See Starting and Stopping Repose
-                            for more information.</para>
-                    </listitem>
-                    <listitem>
-                        <para>For the <emphasis role="bold">ROOT.war
-                                Installation</emphasis>, the config
-                            directory can be set through the web.xml
-                            file in the ROOT.war. See Starting and
-                            Stooping Repose for more information. </para>
-                        <para/>
-                        <para>The following directories can be
-                            customized using the container.cfg.xml if
-                            you do not want to use the default.</para>
-                    </listitem>
-                    <listitem>
-                        <para>Repose deployment folder where ear files
-                            get exploded is
-                            /var/repose/deployment.</para>
-                    </listitem>
-                    <listitem>
-                        <para>Repose ear files are installed in
-                                <filename class="directory"
-                                >/usr/share/repose/filters.</filename>
-                        </para>
-                        <para/>
-                        <para>Click to learn more about Repose
-                            Directories</para>
-                    </listitem>
-                </itemizedlist>
-            </para> </section> 
-        
-        
-        
-    </chapter>
+        </chapter>
     
-    <chapter xml:id="Configuration-d1e365">
-        <title>Configuration</title>
-        <para> To add the HTTP logging component to a &PRODNAME;
-            deployment, add the <code>http-logging</code> filter to
-            the &PRODNAME; configuration file,
-                <code>system-model.cfg.xml</code>. You can read about
-            configuring &PRODNAME; in the &PRODNAME; Deployment
-            Handbook. </para>
-        <important>
-            <para> &PRODNAME;'s HTTP logging component can only be
-                deployed on a system which supports the UTF-8
-                character set. If the system does not support the
-                UTF-8 character set, an error will be thrown at
-                startup and &PRODNAME; will exit. </para>
-        </important>
-        <para> To configure the &PRODNAME; HTTP logging component,
-            edit the <code>system-model.cfg.xml</code> file. Within
-                <code>system-model.cfg.xml</code>, you can specify
-            multiple logs by repeating the <code>http-log</code>
-            element; within each <code>http-log</code>, use
-                <code>format</code> to specify what to log for each
-            request and response; use <code>location</code> to specify
-            where the log should be stored.</para>
+        
+        <chapter xml:id="pREREQS">
+            <title> System Prerequisites</title>
+            <para> Repose's HTTP Logging component must be deployed on
+            a system which supports<emphasis role="bold">
+                UTF-8</emphasis>. If the system does not support
+                <emphasis role="bold">UTF-8</emphasis>, an error will
+            occur during startup and Repose will exit. </para>
+        </chapter>
+            
+            
+            <chapter xml:id="Config"> 
+               <title> Configuration </title>
+<para>The HTTP Logging Component must be added to a Repose deployment as a filter (http-logging filter), this is defined through
+    the System Model Config.The HTTP Logging Filter can be configured by editing the <code>http-logging.cfg.xml</code>. Within that 
+configuration the user can specify the following:</para>
+               <itemizedlist>
+                   <listitem>
+                       <para> Log(s):The <code>http-log</code> element
+                    can be repeated in the configuration  to specify
+                    multiple logs.</para>
+                
+                   </listitem>
+                   <listitem>
+                       <para>Content of each log: The
+                        <code>format</code> attribute within the<code>
+                        http-log</code> element can be used to specify
+                    what will be logged for each request
+                    response.</para>
+                   </listitem>
+                   <listitem>
+                       <para> Targets: The <code>file</code> element
+                    can be used to specify the location(s) on the file
+                    system of where the log information should be
+                    stored. For example: <code>
+                        /usr/local/repose.log</code></para>
+                   </listitem>
+               </itemizedlist>
         <example>
             <title>HTTP Logging Configured for Two Logs</title>
             <programlistingco>
@@ -367,183 +465,9 @@
                 <para> </para>
             </callout>
         </calloutlist>
-    </chapter>
+            </chapter>
     <chapter xml:id="Formatting_Log-d1e431">
-        <title>Choosing What to Log</title>
-        <para> Requests are obtained from URIs and consist of headers
-            and content. <itemizedlist spacing="compact">
-                <listitem>
-                    <para> You can configure &PRODNAME; to log
-                        information from a request's URI and headers.
-                    </para>
-                </listitem>
-                <listitem>
-                    <para> You cannot configure &PRODNAME; to log a
-                        request's content. </para>
-                </listitem>
-            </itemizedlist> This means a log created by &PRODNAME; can
-            be used to investigate operational issues but cannot be
-            used to examine data from the content body. </para>
-        <para>
-            &PRODNAME;'s HTTP logging component implements a subset of the Apache logging functionality described at 
-            <link xlink:href="http://httpd.apache.org/docs/2.2/mod/mod_log_config.html">http://httpd.apache.org/docs/2.2/mod/mod_log_config.html</link>.
-            The table below lists the request and response information you may choose to log:
-        </para>
-        <table border="1" frame="box">
-            
-            <caption>Apache Logging as Implemented by
-                &PRODNAME; HTTP Logging Component</caption>
-            <col width="25%"/>
-            <col width="75%"/>
-            <thead>
-                <tr>
-                    <td>Format String</td>
-                    <td>Description</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <code>\t</code>
-                    </td>
-                    <td>
-                        <para> Tab </para>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>\n</code>
-                    </td>
-                    <td>
-                        <para> Newline </para>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>%%</code>
-                    </td>
-                    <td>
-                        <para> Percent sign </para>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>%a</code>
-                    </td>
-                    <td>
-                        <para> Remote IP address </para>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>%A</code>
-                    </td>
-                    <td>
-                        <para> Local IP address </para>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>%b</code>
-                    </td>
-                    <td>
-                        <para> Size of response in bytes, excluding
-                            HTTP headers </para>
-                        <para>
-                            <emphasis role="italic">In CLF format:
-                                uses "-" rather than zero when no
-                                bytes are sent.</emphasis>
-                        </para>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>%h</code>
-                    </td>
-                    <td>
-                        <para> Remote host </para>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>%m</code>
-                    </td>
-                    <td>
-                        <para> Request method </para>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>%p</code>
-                    </td>
-                    <td>
-                        <para> Canonical port of the server serving
-                            the request </para>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>%q</code>
-                    </td>
-                    <td>
-                        <para> Query string </para>
-                        <para>
-                            <emphasis role="italic">Prepended with "?"
-                                if a query string exists; otherwise,
-                                an empty string.</emphasis>
-                        </para>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>%s</code>
-                    </td>
-                    <td>
-                        <para> Status </para>
-                        <para>
-                            <emphasis role="italic">For
-                                internally-redirected requests, this
-                                is the status of the original
-                                request.</emphasis>
-                        </para>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>%t</code>
-                    </td>
-                    <td>
-                        <para> Time the request was received </para>
-                        <para>
-                            <emphasis role="italic">Standard English
-                                format.</emphasis>
-                        </para>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>%u</code>
-                    </td>
-                    <td>
-                        <para> Remote user </para>
-                        <para>
-                            <emphasis role="italic">May be bogus if
-                                status (<code>%s</code>) is
-                                401.</emphasis>
-                        </para>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <code>%U</code>
-                    </td>
-                    <td>
-                        <para> URL path requested, excluding any query
-                            string </para>
-                    </td>
-                </tr>
-            </tbody>
-        </table>                 
+        <title>Logging Behavior</title>                 
  <para>
      For responses with specific HTTP status codes, you can restrict what is logged. 
      The table below shows examples of format strings using this functionality:
@@ -580,9 +504,9 @@
                 </tr>
             </tbody>
         </table>        
-    </chapter>
-    <chapter xml:id="Using_Log-d1e531">
-        <title>Using the Log</title>
+    
+    <section xml:id="Using_Log-d1e531">
+        <title> Log Access and Use</title>
         <para> The log file is a text file, so it can be viewed with
             any text viewer. Examples of text viewers you can use are
                 <emphasis role="bold">gedit</emphasis> (on a GNOME
@@ -602,31 +526,18 @@
         <para> The log file will grow until it is rotated, moved, or
             deleted. An example of a utility you can configure to
             rotate and archive the log file is <emphasis role="bold"
-                >logrotate</emphasis>. </para>
-        <important>
-            <para> 
-                You control the location of the log file by specifying
-                <code>location</code> in the logging configuration.
-            </para>
-            <para> 
-                You control the content of the log file by specifying
-                <code>http-log</code> in the logging configuration.
-            </para>
-            <para>
-                See <xref linkend="Configuration-d1e365"/> for examples of
-                specifying <code>location</code> and <code>http-log</code>. 
-            </para>
-        </important>    
+                >logrotate</emphasis>. </para>    
         <para> The following table shows the HTTP responses and log
             output generated if you specify <code>http-log</code> as<?sbr?>
             <code>format="Remote IP=%a/tLocal IP=%A/tResponse
                 Size(bytes)=%b/tRemote Host=%h/tRequest Method=%m/tServer
                 Port=%p/tQuery String=%q/tTime Request Received=%t/t
                 Status=%s/tRemote User=%u/tURL Path
-                Requested=%U"/n</code>.
-        </para>
+                Requested=%U"/n</code>. </para>
+        
         <table border="1" frame="box">
-            <caption>Requests, Responses, and Log Output</caption>
+            <caption>
+                    Requests, Responses, and Log Output</caption>
             <col width="25%"/>
             <col width="10%"/>
             <col width="66%"/>
@@ -670,6 +581,36 @@
                 </tr>
             </tbody>
         </table> 
+    </section>
     </chapter>
+<chapter xml:id= "Errors">
+    <title> Error Handling</title>
+    <para> Buffer Overflow Exception when logging is handled by giving
+            possible causes in the error that is logged into Repose
+            logs. Current Error Message will state:    "Exception
+            coming from HTTP logging filter while writing to log
+            buffer." </para>
+        <para><emphasis role="bold">Possible Causes:
+            </emphasis></para>
+        <para>
+            <itemizedlist>
+                <listitem>
+                    <para>Distributed Datastore not being the first
+                        filter of the filter chain in the System
+                        Model.</para>
+                </listitem>
+                <listitem>
+                    <para>Rate Limit Configuration file (if being
+                        used) has capture groups that are too broad
+                        and are filling the datastore.</para>
+                </listitem>
+                <listitem>
+                    <para>Limited disk space and http log file size
+                        where Repose HTTP logging filter is
+                        writing.</para>
+                </listitem>
+            </itemizedlist>
+        </para>
+</chapter>
     <xi:include href="chapters/afterword.xml"/>
 </book>
